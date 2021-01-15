@@ -17,18 +17,29 @@ app.get("/median", (req, res) => {
   return res.send(calc.response())
 })
 
-
-
 app.listen(3000, () => {
     console.log("Running on port 3000")
 })
 
-
 class Calculator {
   constructor(operation, nums) {
     this.operation = operation;
-    this.nums = Array.from(nums.split(","))
+    this.nums = nums;
     this.value;  
+    this.validateNums();
+  }
+
+  validateNums() {
+    let testArray = Array.from(this.nums.split(","))
+    testArray = testArray.map(el => parseInt(el));
+    this.nums = [];
+    testArray.forEach((el)=> {
+      if (Number.isNaN(el)) {
+        throw new Error("ERROR: All inputs must be a valid number")
+      }  
+      this.nums.push(el)
+    })
+    return this.nums
   }
 
   mean() {
@@ -63,7 +74,12 @@ class Calculator {
 }
 
   response() {
-    return {"response": {"operation": `${this.operation}`, "value": `${this.value}`}}
+    let response = {
+      operation: this.operation,
+      value: this.value
+    }
+    return response
+    // return {"response": {"operation": `${this.operation}`, "value": `${this.value}`}}
 }
 }
 
