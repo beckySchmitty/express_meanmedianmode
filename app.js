@@ -4,7 +4,7 @@ app.use(express.json())
 const ExpressError = require("./expressError")
 
 // routes
-app.get("/mean", (req, res) => {
+app.get("/mean", (req, res, next) => {
   try {
     let nums = req.query.nums
     const calc = new Calculator("mean", nums);
@@ -15,18 +15,26 @@ app.get("/mean", (req, res) => {
   }
 })
 
-app.get("/median", (req, res) => {
-  let nums = req.query.nums
-  const calc = new Calculator("median", nums);
-  calc.median()
-  return res.send(calc.response())
+app.get("/median", (req, res, next) => {
+  try {
+    let nums = req.query.nums
+    const calc = new Calculator("median", nums);
+    calc.median()
+    return res.send(calc.response())
+  } catch(e) {
+    next(e)
+  }
 })
 
-app.get("/mode", (req, res) => {
-  let nums = req.query.nums
-  const calc = new Calculator("mode", nums);
-  calc.mode()
-  return res.send(calc.response())
+app.get("/mode", (req, res, next) => {
+  try {
+    let nums = req.query.nums
+    const calc = new Calculator("mode", nums);
+    calc.mode()
+    return res.send(calc.response())
+  } catch (e) {
+    next(e)
+  }
 })
 
 // error handler
@@ -55,15 +63,18 @@ class Calculator {
     this.validateNums();
   }
 
-  validateNums() {
+  // return error msg if no numbers passed in or invalid input
+    validateNums() {
+    if (this.nums.length === 0) {
+      throw new ExpressError('You must pass a query key of nums with a comma-separated list of numbers.', 400)
+    }
     let testArray = Array.from(this.nums.split(","))
-    testArray = testArray.map(el => parseInt(el));
-    this.nums = [];
-    testArray.forEach((el)=> {
+    testArray = testArray.map(el => parseFloat(el));
+    this.nums = testArray.map(el => {
       if (Number.isNaN(el)) {
-        throw new ExpressError("ERROR: All inputs must be a valid number", 403)
+        throw new ExpressError("All inputs must be a valid number", 403)
       }  
-      this.nums.push(el)
+      return el
     })
     return this.nums
   }
