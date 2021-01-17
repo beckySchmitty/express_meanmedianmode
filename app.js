@@ -8,6 +8,9 @@ app.get("/mean", (req, res, next) => {
   try {
     let nums = req.query.nums
     const calc = new Calculator(nums);
+    try {Calculator.validateNums} catch (e){
+      next(e)
+    }
     calc.mean()
     return res.send(calc.response())
   } catch(e) {

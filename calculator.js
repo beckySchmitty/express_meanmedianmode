@@ -14,7 +14,7 @@ class Calculator {
     }
   
     // return error msg if no numbers passed in or invalid input
-      validateNums() {
+    validateNums() {
       if (this.nums.length === 0) {
         throw new ExpressError('You must pass a query key of nums with a comma-separated list of numbers.', 400)
       }
@@ -23,6 +23,7 @@ class Calculator {
       this.nums = testArray.map(el => {
         if (Number.isNaN(el)) {
           throw new ExpressError("All inputs must be a valid number", 403)
+          return
         }  
         return el
       })
@@ -60,7 +61,8 @@ class Calculator {
         }, 
         {});
         this.value = Object.keys(obj).reduce((a, b) => obj[a] > obj[b] ? a : b);
-      return this.value;
+        this.value = parseFloat(this.value)
+      return (this.value);
   }
     response() {
       let response = {
