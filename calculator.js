@@ -23,7 +23,6 @@ class Calculator {
       this.nums = testArray.map(el => {
         if (Number.isNaN(el)) {
           throw new ExpressError("All inputs must be a valid number", 403)
-          return
         }  
         return el
       })
