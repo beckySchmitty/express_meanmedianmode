@@ -8,7 +8,7 @@ app.get("/mean", (req, res, next) => {
   try {
     let nums = req.query.nums
     const calc = new Calculator(nums);
-    try {Calculator.validateNums} catch (e){
+    if (calc.error) {
       next(e)
     }
     calc.mean()
@@ -53,5 +53,3 @@ app.use((error, req, res, next) => {
 app.listen(3000, () => {
     console.log("Running on port 3000")
 })
-
-
